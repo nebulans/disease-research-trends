@@ -107,6 +107,23 @@ class NCBISearch(object):
             for article in root.findall("./DocSum"):
                 self.articles.append(NCBIArticle.from_etree(article))
 
+    def run(self):
+        """
+        Get all article ids and contents
+        """
+        self.get_all_ids()
+        self.get_article_details()
 
+    def articles_by_year(self):
+        """
+        Calculate total number of articles in this search for each year with articles
+        :return:
+        """
+        result = {}
+        for a in self.articles:
+            if a.year not in result:
+                result[a.year] = 0
+            result[a.year] += 1
+        return result
 
 
