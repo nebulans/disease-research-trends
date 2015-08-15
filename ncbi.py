@@ -24,7 +24,10 @@ class NCBIArticle(object):
 
     @classmethod
     def from_etree(cls, tree):
-        title = tree.find(".Item[@Name='Title']").text.encode("utf-8")  # NCBI API seems confused about encoding, we know it should be UTF-8
+        try:
+            title = tree.find(".Item[@Name='Title']").text.encode("utf-8")  # NCBI API seems confused about encoding, we know it should be UTF-8
+        except AttributeError:
+            title = ""
         pub_date = tree.find(".Item[@Name='PubDate']").text
         year = None
         match = re.search("\d{4}", pub_date)
