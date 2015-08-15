@@ -20,7 +20,15 @@ def search():
     articles_per_year = search_obj.articles_by_year()
     for year in range(min(*articles_per_year.keys()), max(*articles_per_year.keys()) + 1):
         data["articlesPerYear"].append({"year": year, "articles": articles_per_year.get(year, 0)})
+    data["queryDetails"] = query_details(search_obj)
     return json.dumps(data)
+
+def query_details(search_object):
+    data = {
+        "results": search_object.results
+    }
+    return render_template("query_details.html", **data)
+
 
 if __name__ == "__main__":
     app.run()

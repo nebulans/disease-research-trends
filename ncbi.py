@@ -49,6 +49,10 @@ class NCBISearch(object):
         self.fetch_number = 10000
         self.articles = []
 
+    @property
+    def results(self):
+        return len(self.articles)
+
     def get_base_params(self, **kwargs):
         kwargs["db"] = self.database
         kwargs["tool"] = self.tool_name

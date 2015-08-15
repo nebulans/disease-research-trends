@@ -52,6 +52,12 @@
 			<div class="section">
 				<h5>Author Frequency</h5>
 			</div>
+
+			<div class="row">
+				<div class="col s12" id="query_details">
+				</div>
+			</div>
+
 		</div>
 	</main>
 
@@ -108,6 +114,7 @@
 					dataType: "json"
 				}).success(function(data){
 					drawYearGraph(data["articlesPerYear"]);
+					$("#query_details").html(data["queryDetails"]);
 				}).always(function(){
 					$("#search_in_progress").addClass("hide");
 				});
