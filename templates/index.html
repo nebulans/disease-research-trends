@@ -28,6 +28,9 @@
 							<input type="text" id="search_term" name="search_term">
 							<label for="search_term">Search</label>
 						</div>
+						<div class="progress hide" id="search_in_progress">
+							<div class="indeterminate"></div>
+						</div>
 					</form>
 					<div class="col l6 m12">
 						<div class="card blue-grey darken-1">
@@ -66,7 +69,7 @@
 				left: 60
 			};
 			var width = $("#yearChart").width() - margin.left - margin.right;
-			var height = 300 - margin.top - margin.bottom;
+			var height = 600 - margin.top - margin.bottom;
 			var xScale = d3.scale.ordinal().rangeRoundBands([0, width], 0.1);
 			var yScale = d3.scale.linear().rangeRound([height, 0]);
 			var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
@@ -105,7 +108,10 @@
 					dataType: "json"
 				}).success(function(data){
 					drawYearGraph(data["articlesPerYear"]);
-				})
+				}).always(function(){
+					$("#search_in_progress").addClass("hide");
+				});
+				$("#search_in_progress").removeClass("hide");
 			}
 		})
 	</script>
