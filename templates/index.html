@@ -22,7 +22,7 @@
 			<div class="section">
 				<h5>Search for a disease or disease area</h5>
 				<div class="row">
-					<form class="col l6 m12">
+					<form class="col l6 m12" action="{{ url_for('search') }}" method="POST">
 						<div class="input-field col s12">
 							<i class="material-icons prefix">search</i>
 							<input type="text" id="search_term" name="search_term">
@@ -54,5 +54,21 @@
 
 	<script type="text/javascript" src="{{ url_for('bower.static', filename='jquery/dist/jquery.min.js') }}"></script>
 	<script type="text/javascript" src="{{ url_for('bower.static', filename='materialize/bin/materialize.js') }}"></script>
+	<script type="text/javascript">
+		$(document).on("keypress", "#search_term", function(e){
+			if (e.which==13) {
+				// Enter key
+				e.preventDefault();  // Don't submit conventionally
+				var form = $(this).parents("form");
+				var form_data = form.serializeArray();
+				var form_target = form.attr("action");
+				$.ajax({
+					url: form_target,
+					method: "POST",
+					data: form_data
+				})
+			}
+		})
+	</script>
 </body>
 </html>
