@@ -17,7 +17,7 @@ class NCBIArticle(object):
 
     def __init__(self, title, year):
         self.title = title
-        self.year = year
+        self.year = int(year)
 
     def __str__(self):
         return "{} ({})".format(self.title, self.year)
