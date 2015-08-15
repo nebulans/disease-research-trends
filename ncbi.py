@@ -42,8 +42,8 @@ class NCBISearch(object):
         self.term = term
         self.database = "pubmed"
         self.article_ids = set()
-        self.search_number = 5
-        self.fetch_number = 5
+        self.search_number = 100000
+        self.fetch_number = 10000
         self.articles = []
 
     def get_base_params(self, **kwargs):
