@@ -13,6 +13,7 @@
     "tests"
   ],
   "dependencies": {
-    "materialize": "~0.97.0"
+    "materialize": "~0.97.0",
+    "d3": "~3.5.6"
   }
 }
