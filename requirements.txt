@@ -1,2 +1,4 @@
 flask
 flask-bower
+requests
+lxml
