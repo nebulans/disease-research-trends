@@ -88,6 +88,14 @@
 					.attr("transform", "translate(" + margin.left + ", " + margin.top + ")");
 			xScale.domain(data.map(function (d){ return d["year"]}));
 			yScale.domain([0, d3.max(data, function(d) { return d["articles"]})]);
+			var num_ticks = xScale.domain().length;
+			var new_ticks = [];
+			$.each(xScale.domain(), function (index, tick){
+				if (tick % 5 == 0) {
+					new_ticks.push(tick)
+				}
+			});
+			xAxis.tickValues(new_ticks);
 			svg.append("g").attr("class", "x axis").attr("transform", "translate(0, " + height + ")").call(xAxis);
 			svg.append("g").attr("class", "y axis").call(yAxis);
 			svg.selectAll("rect")
