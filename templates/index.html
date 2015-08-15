@@ -70,7 +70,7 @@
 			var xScale = d3.scale.ordinal().rangeRoundBands([0, width], 0.1);
 			var yScale = d3.scale.linear().rangeRound([height, 0]);
 			var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
-			var yAxis = d3.svg.axis().scale(yScale).orient("left");
+			var yAxis = d3.svg.axis().scale(yScale).orient("left").tickFormat(d3.format("d"));
 			var svg = d3.select("#yearChart")
 					.append("svg")
 					.attr("width", width + margin.left + margin.right)
