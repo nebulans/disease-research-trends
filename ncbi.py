@@ -1,10 +1,36 @@
+from itertools import izip_longest
 from lxml import etree
+import re
 import requests
 import os
 
 
 NCBI_SEARCH_URL = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi"
 NCBI_FETCH_URL = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi"
+
+def grouper(iterable, n, fillvalue=None):
+    args = [iter(iterable)] * n
+    return izip_longest(fillvalue=fillvalue, *args)
+
+
+class NCBIArticle(object):
+
+    def __init__(self, title, year):
+        self.title = title
+        self.year = year
+
+    def __str__(self):
+        return "{} ({})".format(self.title, self.year)
+
+    @classmethod
+    def from_etree(cls, tree):
+        title = tree.find(".Item[@Name='Title']").text.encode("utf-8")  # NCBI API seems confused about encoding, we know it should be UTF-8
+        pub_date = tree.find(".Item[@Name='PubDate']").text
+        year = None
+        match = re.search("\d{4}", pub_date)
+        if match:
+            year = match.group(0)
+        return cls(title, year)
 
 
 class NCBISearch(object):
@@ -33,10 +59,10 @@ class NCBISearch(object):
 
     def get_fetch_params(self, **kwargs):
         kwargs = self.get_base_params(**kwargs)
-        kwargs["id"] = ",".join(self.article_ids)
         kwargs["retmode"] = "xml"
         kwargs["rettype"] = "docsum"
         kwargs["retmax"] = self.fetch_number
+        kwargs["retstart"] = 0
         return kwargs
 
     def get_all_ids(self):
@@ -70,11 +96,16 @@ class NCBISearch(object):
     def get_article_details(self):
         """
         Get article details for all articles in self.article_ids
-        :return:
+        Instantiate NCBIArticle objects for each, append to self.articles
+        :return: None
         """
-        data = self.get_fetch_params(retstart=0)
-        result = requests.post(NCBI_FETCH_URL, data)
-        pass
+        id_list = list(self.article_ids)  # Need list to allow indexing here
+        for ids in grouper(id_list, self.fetch_number, ""):  # Fixed number of API requests here, no danger of endless fetching
+            data = self.get_fetch_params(id=",".join(ids))
+            result = requests.post(NCBI_FETCH_URL, data)
+            root = etree.fromstring(result.content)
+            for article in root.findall("./DocSum"):
+                self.articles.append(NCBIArticle.from_etree(article))
 
 
 
