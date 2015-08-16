@@ -83,6 +83,13 @@
 								<p>Press enter to submit your search</p>
 							</div>
 						</div>
+						<div class="card yellow darken-1 hide" id="searchFailedCard">
+							<div class="card-content black-text">
+								<span class="card-title black-text">The search failed.</span>
+								<p>This could be because fetching the papers from the API was taking too long.
+								Try a narrower date range or a more specific disease</p>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -231,9 +238,12 @@
 					$("#query_details").html(data["queryDetails"]);
 					drawYearGraph(data["articlesPerYear"]);
 					drawWordCloud(data["titleWords"]);
+				}).fail(function(){
+					$("#searchFailedCard").removeClass("hide");
 				}).always(function(){
 					$("#search_in_progress").addClass("hide");
 				});
+				$("#searchFailedCard").addClass("hide");
 				$("#search_in_progress").removeClass("hide");
 			}
 		})
