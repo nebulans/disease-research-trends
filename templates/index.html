@@ -97,6 +97,23 @@
 	<script type="text/javascript" src="{{ url_for('bower.static', filename='materialize/bin/materialize.js') }}"></script>
 	<script type="text/javascript" src="{{ url_for('bower.static', filename='d3/d3.min.js') }}"></script>
 	<script type="text/javascript">
+		function getTicks(bins) {
+			var num = bins.length;
+			var factor = 1;
+			if (num < 16) {
+			} else if (num <= 100) {
+				factor = 5;
+			} else {
+				factor = 10;
+			}
+			var new_ticks = [];
+			$.each(bins, function(index, tick){
+				if (tick % factor == 0) {
+					new_ticks.push(tick)
+				}
+			});
+			return new_ticks;
+		}
 		function drawYearGraph(data) {
 			$("#yearChart").empty();
 			var margin = {
@@ -119,18 +136,7 @@
 					.attr("transform", "translate(" + margin.left + ", " + margin.top + ")");
 			xScale.domain(data.map(function (d){ return d["year"]}));
 			yScale.domain([0, d3.max(data, function(d) { return d["articles"]})]);
-			var num_ticks = xScale.domain().length;
-			var new_ticks = [];
-			$.each(xScale.domain(), function (index, tick){
-				var spacing = 5;
-				if (num_ticks > 100) {
-					spacing = 10;
-				}
-				if (tick % spacing == 0) {
-					new_ticks.push(tick)
-				}
-			});
-			xAxis.tickValues(new_ticks);
+			xAxis.tickValues(getTicks(xScale.domain()));
 			svg.append("g").attr("class", "x axis").attr("transform", "translate(0, " + height + ")").call(xAxis);
 			svg.append("g").attr("class", "y axis").call(yAxis);
 			svg.selectAll("rect")
