@@ -14,7 +14,14 @@ def index():
 
 @app.route('/search/', methods=["POST"])
 def search():
-    search_obj = NCBISearch(request.form["search_term"])
+    search_term = request.form.get("search_term")
+    search_start = request.form.get("search_start", "1800")
+    if not search_start:
+        search_start = "1800"
+    search_end = request.form.get("search_end", "2016")
+    if not search_end:
+        search_end = "2016"
+    search_obj = NCBISearch(search_term, dates=(search_start, search_end))
     search_obj.run()
     data = {"articlesPerYear": []}
     articles_per_year = search_obj.articles_by_year()

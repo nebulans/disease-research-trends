@@ -46,13 +46,14 @@ class NCBISearch(object):
     tool_name = "Disease Research Trends"
     tool_email = os.environ.get("disease_email")
 
-    def __init__(self, term):
+    def __init__(self, term, dates=None):
         self.term = term
         self.database = "pubmed"
         self.article_ids = set()
         self.search_number = 100000
         self.fetch_number = 10000
         self.articles = []
+        self.dates = dates
 
     @property
     def results(self):
@@ -67,6 +68,11 @@ class NCBISearch(object):
     def get_search_params(self, **kwargs):
         kwargs = self.get_base_params(**kwargs)
         kwargs["term"] = self.term
+        if self.dates:
+            kwargs["datetype"] = "edat"
+            kwargs["mindate"] = self.dates[0]
+            kwargs["maxdate"] = self.dates[1]
+        print kwargs
         return kwargs
 
     def get_fetch_params(self, **kwargs):
@@ -103,7 +109,6 @@ class NCBISearch(object):
         xml_ids = root.findall("./IdList/Id")
         ids = {tag.text for tag in xml_ids}
         count = int(root.find("./Count").text)
-        print result.content
         return {"id_set": ids, "result_count": count}
 
     def get_article_details(self):

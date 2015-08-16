@@ -41,10 +41,22 @@
 				<h5>Search for a disease or disease area</h5>
 				<div class="row">
 					<form class="col l6 m12" action="{{ url_for('search') }}" method="POST">
-						<div class="input-field col s12">
-							<i class="material-icons prefix">search</i>
-							<input type="text" id="search_term" name="search_term">
-							<label for="search_term">Search</label>
+						<div class="row">
+							<div class="input-field col s12">
+								<i class="material-icons prefix">search</i>
+								<input type="text" id="search_term" name="search_term">
+								<label for="search_term">Search</label>
+							</div>
+						</div>
+						<div class="row">
+							<div class="input-field col s6">
+								<input type="text" id="search_start" name="search_start">
+								<label for="search_start">Start Year</label>
+							</div>
+							<div class="input-field col s6">
+								<input type="text" id="search_end" name="search_end">
+								<label for="search_end">End Year</label>
+							</div>
 						</div>
 						<div class="progress hide" id="search_in_progress">
 							<div class="indeterminate"></div>
@@ -54,6 +66,7 @@
 						<div class="card blue-grey darken-1">
 							<div class="card-content white-text">
 								<p>eg Diabetes, Coronary Heart Disease</p>
+								<p>Optionally, enter a start or end year for the search</p>
 								<p>Press enter to submit your search</p>
 							</div>
 						</div>
@@ -131,7 +144,7 @@
 					.attr("class", "bar");
 		}
 
-		$(document).on("keypress", "#search_term", function(e){
+		$(document).on("keypress", "input", function(e){
 			if (e.which==13) {
 				// Enter key
 				e.preventDefault();  // Don't submit conventionally
