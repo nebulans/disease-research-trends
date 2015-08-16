@@ -31,9 +31,10 @@ def search():
     data["queryDetails"] = query_details(search_obj)
     data["titleWords"] = []
     title_word_count = search_obj.title_word_frequency()
-    cutoff_value = 0
-    if len(title_word_count) > WORDS_CUTOFF:
+    try:
         cutoff_value = sorted([i for i in title_word_count.values()])[-150]
+    except IndexError:
+        cutoff_value = 0
     for word, count in title_word_count.iteritems():
         if count <= cutoff_value + 1:
             continue
@@ -51,4 +52,5 @@ def query_details(search_object):
 
 
 if __name__ == "__main__":
+    app.debug = True
     app.run()

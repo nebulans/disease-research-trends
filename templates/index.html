@@ -18,16 +18,29 @@
 		}
 
 		#yearChart .bar {
-			fill: #F44336;
+			fill: #E57373;
 			stroke: #000000;
 			shape-rendering: crispEdges;
+		}
+
+		#yearChart .bar:hover {
+			fill: #F44336;
+		}
+
+		.d3-tip {
+			line-height: 1;
+			font-weight: bold;
+			padding: 12px;
+			background: rgba(0, 0, 0, 0.8);
+			color: #fff;
+			border-radius: 2px;
 		}
 	</style>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 </head>
 <body>
 	<main>
-		<div class="section red lighten" id="index-banner">
+		<div class="section red lighten-1" id="index-banner">
 			<div class="container">
 				<div class="row">
 					<div class="col s12">
@@ -98,6 +111,7 @@
 	<script type="text/javascript" src="{{ url_for('bower.static', filename='materialize/bin/materialize.js') }}"></script>
 	<script type="text/javascript" src="{{ url_for('bower.static', filename='d3/d3.min.js') }}"></script>
 	<script type="text/javascript" src="{{ url_for('bower.static', filename='d3-cloud/d3.layout.cloud.js') }}"></script>
+	<script type="text/javascript" src="{{ url_for('bower.static', filename='d3-tip/index.js') }}"></script>
 	<script type="text/javascript">
 		function getTicks(bins) {
 			var num = bins.length;
@@ -130,6 +144,12 @@
 			var yScale = d3.scale.linear().rangeRound([height, 0]);
 			var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
 			var yAxis = d3.svg.axis().scale(yScale).orient("left").tickFormat(d3.format("d"));
+			var tip = d3.tip()
+					.attr("class", "d3-tip")
+					.offset([-10, 0])
+					.html(function(d) {
+						return "<strong>" + d["year"] + "</strong>: " + d["articles"] + " Articles"
+					});
 			var svg = d3.select("#yearChart")
 					.append("svg")
 					.attr("width", width + margin.left + margin.right)
@@ -141,6 +161,7 @@
 			xAxis.tickValues(getTicks(xScale.domain()));
 			svg.append("g").attr("class", "x axis").attr("transform", "translate(0, " + height + ")").call(xAxis);
 			svg.append("g").attr("class", "y axis").call(yAxis);
+			svg.call(tip);
 			svg.selectAll("rect")
 					.data(data, function(d){return d["year"]})
 					.enter()
@@ -149,7 +170,9 @@
 					.attr("y", function(d){ return yScale(d["articles"])})
 					.attr("width", xScale.rangeBand())
 					.attr("height", function (d) { return yScale(0) - yScale(d["articles"])})
-					.attr("class", "bar");
+					.attr("class", "bar")
+					.on("mouseover", tip.show)
+					.on("mouseout", tip.hide);
 		}
 
 		function drawWordCloud(word_data) {
