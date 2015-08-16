@@ -15,9 +15,10 @@ def grouper(iterable, n, fillvalue=None):
 
 class NCBIArticle(object):
 
-    def __init__(self, title, year):
+    def __init__(self, title, year, journal):
         self.title = title
         self.year = int(year)
+        self.journal = journal
 
     def __str__(self):
         return "{} ({})".format(self.title, self.year)
@@ -28,12 +29,16 @@ class NCBIArticle(object):
             title = tree.find(".Item[@Name='Title']").text.encode("utf-8")  # NCBI API seems confused about encoding, we know it should be UTF-8
         except AttributeError:
             title = ""
+        try:
+            journal = tree.find(".Item[@Name='FullJournalName']").text.encode("utf-8")  # NCBI API seems confused about encoding, we know it should be UTF-8
+        except AttributeError:
+            journal = ""
         pub_date = tree.find(".Item[@Name='PubDate']").text
         year = None
         match = re.search("\d{4}", pub_date)
         if match:
             year = match.group(0)
-        return cls(title, year)
+        return cls(title, year, journal)
 
 
 class NCBISearch(object):
@@ -98,6 +103,7 @@ class NCBISearch(object):
         xml_ids = root.findall("./IdList/Id")
         ids = {tag.text for tag in xml_ids}
         count = int(root.find("./Count").text)
+        print result.content
         return {"id_set": ids, "result_count": count}
 
     def get_article_details(self):
