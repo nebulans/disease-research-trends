@@ -3,6 +3,7 @@ from lxml import etree
 import re
 import requests
 import os
+import string
 
 
 NCBI_SEARCH_URL = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi"
@@ -22,6 +23,22 @@ class NCBIArticle(object):
 
     def __str__(self):
         return "{} ({})".format(self.title, self.year)
+
+    @property
+    def clean_title(self):
+        """
+        Clean the article title to strip leading and trailing punctuation
+        :return: the cleaned title
+        """
+        return self.title.strip(string.punctuation)
+
+    @property
+    def clean_title_words(self):
+        """
+        Take words from the clean title, clean each word with same method
+        :return:
+        """
+        return [w.strip(string.punctuation) for w in self.clean_title.split(" ")]
 
     @classmethod
     def from_etree(cls, tree):
@@ -72,7 +89,6 @@ class NCBISearch(object):
             kwargs["datetype"] = "edat"
             kwargs["mindate"] = self.dates[0]
             kwargs["maxdate"] = self.dates[1]
-        print kwargs
         return kwargs
 
     def get_fetch_params(self, **kwargs):
@@ -143,5 +159,15 @@ class NCBISearch(object):
                 result[a.year] = 0
             result[a.year] += 1
         return result
+
+    def title_word_frequency(self):
+        words = {}
+        for a in self.articles:
+            for word in a.clean_title_words:
+                word = word.lower()
+                if word not in words:
+                    words[word] = 0
+                words[word] += 1
+        return words
 
 

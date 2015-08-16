@@ -7,6 +7,7 @@ Bower(app)
 from ncbi import NCBISearch
 import json
 
+WORDS_CUTOFF = 50
 
 @app.route('/')
 def index():
@@ -28,6 +29,18 @@ def search():
     for year in range(min(*articles_per_year.keys()), max(*articles_per_year.keys()) + 1):
         data["articlesPerYear"].append({"year": year, "articles": articles_per_year.get(year, 0)})
     data["queryDetails"] = query_details(search_obj)
+    data["titleWords"] = []
+    title_word_count = search_obj.title_word_frequency()
+    cutoff_value = 0
+    if len(title_word_count) > WORDS_CUTOFF:
+        cutoff_value = sorted([i for i in title_word_count.values()])[-150]
+    for word, count in title_word_count.iteritems():
+        if count <= cutoff_value + 1:
+            continue
+        if len(word) < 4:
+            continue
+        data["titleWords"].append({"word": word, "occurrences": count})
+    print len(data["titleWords"])
     return json.dumps(data)
 
 def query_details(search_object):

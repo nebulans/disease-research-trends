@@ -81,7 +81,8 @@
 			</div>
 			<div class="divider"></div>
 			<div class="section">
-				<h5>Author Frequency</h5>
+				<h5>Article Title Words</h5>
+				<div class="col m12" id="wordCloud"></div>
 			</div>
 
 			<div class="row">
@@ -96,6 +97,7 @@
 	<script type="text/javascript" src="{{ url_for('bower.static', filename='jquery/dist/jquery.min.js') }}"></script>
 	<script type="text/javascript" src="{{ url_for('bower.static', filename='materialize/bin/materialize.js') }}"></script>
 	<script type="text/javascript" src="{{ url_for('bower.static', filename='d3/d3.min.js') }}"></script>
+	<script type="text/javascript" src="{{ url_for('bower.static', filename='d3-cloud/d3.layout.cloud.js') }}"></script>
 	<script type="text/javascript">
 		function getTicks(bins) {
 			var num = bins.length;
@@ -150,6 +152,46 @@
 					.attr("class", "bar");
 		}
 
+		function drawWordCloud(word_data) {
+			var container = $("#wordCloud");
+			container.empty();
+			var counts = $.map(word_data, function(d) {
+				return d["occurrences"]
+			});
+			console.log([d3.min(counts), d3.max(counts)]);
+			var sizeScale = d3.scale.linear().range([50, 3000]).domain([d3.min(counts), d3.max(counts)]);
+			var fill = d3.scale.category20();
+			var layout = d3.layout.cloud()
+					.size([container.width(), 500])
+					.words($.map(word_data, function(d) {
+						return {text: d["word"], size: 10 + sizeScale(d["occurrences"]), test: "haha"}
+					}))
+					.padding(5)
+					.rotate(function() { return (~~(Math.random() * 6) - 3) * 30; })
+					.font("Impact")
+					.fontSize(function(d) { return Math.sqrt(d.size); })
+					.on("end", draw);
+			layout.start();
+			function draw(words) {
+				d3.select("#wordCloud").append("svg")
+						.attr("width", layout.size()[0])
+						.attr("height", layout.size()[1])
+					.append("g")
+						.attr("transform", "translate(" + layout.size()[0] / 2 + "," + layout.size()[1] / 2 + ")")
+					.selectAll("text")
+						.data(words)
+					.enter().append("text")
+						.style("font-size", function(d) { return d.size + "px"; })
+						.style("font-family", "Impact")
+						.style("fill", function(d, i) { return fill(i); })
+						.attr("text-anchor", "middle")
+						.attr("transform", function(d) {
+						return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+						})
+						.text(function(d) { return d.text; });
+			}
+		}
+
 		$(document).on("keypress", "input", function(e){
 			if (e.which==13) {
 				// Enter key
@@ -163,8 +205,9 @@
 					data: form_data,
 					dataType: "json"
 				}).success(function(data){
-					drawYearGraph(data["articlesPerYear"]);
 					$("#query_details").html(data["queryDetails"]);
+					drawYearGraph(data["articlesPerYear"]);
+					drawWordCloud(data["titleWords"]);
 				}).always(function(){
 					$("#search_in_progress").addClass("hide");
 				});
