@@ -1,0 +1,1 @@
+web: gunicorn diseasemap:app --log-file=-
