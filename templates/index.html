@@ -109,7 +109,11 @@
 			var num_ticks = xScale.domain().length;
 			var new_ticks = [];
 			$.each(xScale.domain(), function (index, tick){
-				if (tick % 5 == 0) {
+				var spacing = 5;
+				if (num_ticks > 100) {
+					spacing = 10;
+				}
+				if (tick % spacing == 0) {
 					new_ticks.push(tick)
 				}
 			});
