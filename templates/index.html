@@ -3,7 +3,7 @@
 <head lang="en">
 	<meta charset="UTF-8">
 	<title>Disease Research Trends</title>
-	<link type="text/css" rel="stylesheet" href="{{ url_for('bower.static', filename='materialize/bin/materialize.css') }}" media="screen,projection" />
+	<link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.0/css/materialize.min.css" media="screen,projection" />
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 	<style>
 		.axis path, .axis line {
@@ -107,11 +107,11 @@
 	</main>
 
 
-	<script type="text/javascript" src="{{ url_for('bower.static', filename='jquery/dist/jquery.min.js') }}"></script>
-	<script type="text/javascript" src="{{ url_for('bower.static', filename='materialize/bin/materialize.js') }}"></script>
-	<script type="text/javascript" src="{{ url_for('bower.static', filename='d3/d3.min.js') }}"></script>
-	<script type="text/javascript" src="{{ url_for('bower.static', filename='d3-cloud/d3.layout.cloud.js') }}"></script>
-	<script type="text/javascript" src="{{ url_for('bower.static', filename='d3-tip/index.js') }}"></script>
+	<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.0/js/materialize.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
+	<script type="text/javascript" src="/js/d3-cloud.js"></script>
+	<script type="text/javascript" src="/js/d3-tooltip.js"></script>
 	<script type="text/javascript">
 		function getTicks(bins) {
 			var num = bins.length;

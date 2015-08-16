@@ -1,8 +1,5 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, send_from_directory
 app = Flask(__name__)
-
-from flask.ext.bower import Bower
-Bower(app)
 
 from ncbi import NCBISearch
 import json
@@ -12,6 +9,10 @@ WORDS_CUTOFF = 50
 @app.route('/')
 def index():
     return render_template("index.html")
+
+@app.route('/js/<path:path>')
+def send_js(path):
+    return send_from_directory('js', path)
 
 @app.route('/search/', methods=["POST"])
 def search():
